@@ -1,0 +1,27 @@
+name: Auto update Python dependencies
+on:
+  schedule:
+    # runs At 00:01 on day-of-month 1 and 15.
+    - cron: '1 0 1,15 * *'
+  workflow_dispatch:
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the head commit of the branch
+      uses: actions/checkout@v4
+      with:
+        ref: staging
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Run auto dependency update
+      uses: emZubair/dependencies-autoupdate@v1.2.2
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        pr-branch: "staging"
+        update-command: "'make upgrade'"
