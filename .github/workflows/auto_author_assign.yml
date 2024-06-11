@@ -12,4 +12,14 @@ jobs:
   assign-author:
     runs-on: ubuntu-latest
     steps:
-      - uses: toshimaru/auto-author-assign@v1.6.0
+      - name: Assign pull request to creator
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const creator = context.payload.pull_request.user.login;
+            github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              assignees: [creator]
+            });
